@@ -1,0 +1,98 @@
+--Yazýlacak kod bloklarý ANSII standartlarýnda yazýlacaktýr.
+--Genel Bilgiler;
+--case insensitive/büyük küçük duyarsýz
+--tablo oluþturuluktan sonra ilk önce where çalýþýr
+--inner join yalnýzca iki tabloda eþleþenleri bir araya getirir
+
+--select seçmek
+--sonrasýnda yazýcaðýmýz sütunlarý /select in peþine yýldýz koyarsak tablonun tamamý
+--from hangi tablodan alýcaðýmýzý belirtir
+SELECT ContactName,CustomerName,City FROM Customers;
+
+--Seçtiðimiz kolonlarýn peþine yazdýðýmýz isimler sütunlarýn adýný deðiþtirir
+--Bu iþleme aliases(takma ad) denir
+SELECT ContactName Adi,CustomerName SirketAdi,City Sehir FROM Customers;
+
+--Stringler ANSII standartlarýnda tek týrnakla yazýlýr
+--Where koþul koymak için
+--Customers tablosundaki city si london olanlarý getir
+SELECT * FROM Customers where City='London';
+
+--bana Products daki categoryýd si 1 olan ürünleri getir.
+SELECT * FROM Products where categoryId=1;
+
+--or yada demektir
+--bana Products daki categoryýd si 1 olan ürünleri yada categoryId si 3 olanlarý getir.
+SELECT * FROM Products where categoryId=1 or categoryId=3;
+
+--and ve demektir
+--bana Products daki categoryýd si 1 olan ürünleri ve price i >10 olanlarý getir.
+SELECT * FROM Products where categoryId=1 and price>=10;
+
+--order by sýralamak demek
+--order by komutunun default hali ascendingdir. yani;
+--a dan z ye gider
+--küçükten büyüðe sýralar
+SELECT * FROM Products order by ProductName;
+SELECT * FROM Products order by CategoryId,ProductName;
+--tam tersi þekilde aratmak itiyorsan descending yapmak istiyorsan desc takýsý eklemelisin
+SELECT * FROM Products order by price desc;
+
+--count tüm satýrlarý say
+SELECT count(*) FROM Products ;
+
+--group by gruplandýrmak için kullanýlýr
+--group by kullanýlýrken selectten sonra gruplanýcak kýsmýn adý yazýlýr
+select categoryId from products group by categoryId
+--ürünler toblosundaki categoryýd sütunundaki farklý categoryýdlerini getir
+--group by yaptýðýmýzda üstteki örnek nezrinde her bir categoryid için arka planda tablolar oluþturulur
+--bu oluþturulan tablolar ürünleri içerir
+--bundan dolayý count(*) ý kullanarak hangi grupta kaç ürün olduðunu görebiliriz.
+SELECT categoryId,count(*) adet FROM products group by categoryId
+
+--group by da tüm veri için koþul koymak için where kullanýlmaz
+--bunun yerine having kullanýlýr
+SELECT categoryId,count(*) adet FROM products group by categoryId having count(*)<10
+--bana içeriðinde 10 tane üründen eksik olan kategorileri ver
+
+--group by da where kýsýt için kullanýlabilir
+sELECT categoryId,count(*) adet FROM products where unitPrice>20 group by categoryId having count(*)<10
+
+--inner join 
+--tablolarý birleþtirmek amaçlý kullanýlýr
+SELECT * FROM products inner join categories 
+
+--category ýdler eþitse birleþtirmek için on kullanýlýr
+SELECT * FROM products inner join categories on products.categoryId = categories.categoryId
+
+--* tüm kolonlarý getirirken istediðimiz kolonlarýda getirtebiliriz
+SELECT products.productId, products.productname,products.price,categories.categoryname FROM products inner join categories on products.categoryId = categories.categoryId
+
+--inner join yalnýzca iki tabloda eþleþenleri bir araya getirir
+SELECT * FROM Customers products inner join orderdetails
+--bu yüzden bu yazým hiçbir sonuç vermez
+--fakat alttaki yazým sonuç verir
+SELECT * FROM products pr inner join orderdetails od on pr.productId =od.productId
+
+--hangi üründen satamadýk gibi sorgular için:
+--yazýma göre solda olup saðda olmayanlarýda getirmek için inner yerine left yazýlýr
+SELECT * FROM products pr left join orderdetails od on pr.productId =od.productId
+
+--bir tabloda olup diðer tabloda olmayaný bulmak için þu sorgularla kontrol yapýlýr
+SELECT * FROM customers c inner join orders o on c.customerId=o.customerId
+SELECT * FROM customers c left join orders o on c.customerId=o.customerId
+--ikisinin satýr sayýlarý birbirinden farklýdýr
+--bu demektirki satýþ yapýlmayan müþteriler sistemde bulunmaktadýr
+SELECT * FROM customers c left join orders o on c.customerId=o.customerId where o.customerId is null
+--bu sorguyla bu müþterileri bulabiliriz
+
+--üst üste inner etmek
+SELECT * FROM products pr left join orderdetails od on pr.productId =od.productId inner join orders o on o.orderId=od.orderID
+
+
+
+
+
+
+
+
